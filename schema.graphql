@@ -1,0 +1,52 @@
+type Location {
+	id: Int!
+    longitude: Float!
+    latitude: Float!
+    locationName: String
+}
+
+type MainValues {
+    temperature: Float!
+    humidity: Float!
+    brightness: Int!
+    pressure: Int
+}
+
+type Cloud {
+	cloudiness: Float!
+	uvIndex: Int
+	isSnow: Boolean
+	isRain: Boolean
+}
+
+type Wind {
+	speed: Float!
+	direction: Float!
+}
+
+type WeatherData {
+    location: Location!
+    values: MainValues!
+    cloud: Cloud!
+    wind: Wind
+    date: Timestamp!
+}
+
+input NewLocation {
+	longitude: Float!
+	latitude: Float!
+	locationName: String
+}
+
+type Mutation {
+    createLocation(input: NewLocation!): Location!
+}
+
+type Query {
+	location(id: Int!): Location!
+    locationsInRegion(longitude: Float, latitude: Float, radius: Float = 0.0001): [Location!]!
+    weatherInRegion(longitude: Float, latitude: Float, radius: Float = 0.0001): [WeatherData]!
+    weatherInLocation(locationId: Int!): WeatherData!
+}
+
+scalar Timestamp
