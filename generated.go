@@ -393,9 +393,9 @@ var parsedSchema = gqlparser.MustLoadSchema(
 
 type MainValues {
     temperature: Float!
-    humidity: Float!
+    humidity: Int!
     brightness: Int!
-    pressure: Int
+    pressure: Float
 }
 
 type Cloud {
@@ -842,10 +842,10 @@ func (ec *executionContext) _MainValues_humidity(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.(int)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MainValues_brightness(ctx context.Context, field graphql.CollectedField, obj *models.MainValues) graphql.Marshaler {
@@ -893,10 +893,10 @@ func (ec *executionContext) _MainValues_pressure(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*int)
+	res := resTmp.(*float64)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createLocation(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {

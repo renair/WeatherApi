@@ -7,9 +7,9 @@ type Location {
 
 type MainValues {
     temperature: Float!
-    humidity: Float!
+    humidity: Int!
     brightness: Int!
-    pressure: Int
+    pressure: Float
 }
 
 type Cloud {

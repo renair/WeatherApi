@@ -17,10 +17,10 @@ type Location struct {
 }
 
 type MainValues struct {
-	Temperature float64 `json:"temperature"`
-	Humidity    float64 `json:"humidity"`
-	Brightness  int     `json:"brightness"`
-	Pressure    *int    `json:"pressure"`
+	Temperature float64  `json:"temperature"`
+	Humidity    int      `json:"humidity"`
+	Brightness  int      `json:"brightness"`
+	Pressure    *float64 `json:"pressure"`
 }
 
 type NewLocation struct {
