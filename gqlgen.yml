@@ -8,7 +8,15 @@ schema:
 exec:
   filename: generated.go
 model:
-  filename: models_gen.go
+  filename: models/models_gen.go
+  package: models
 resolver:
-  filename: resolver.go
+  filename: resolver/resolver.go
+  package: resolver
   type: Resolver
+  
+models:
+  Timestamp:
+    model: github.com/renair/weather/models.Timestamp
+  WeatherData:
+    model: github.com/renair/weather/models.WeatherData

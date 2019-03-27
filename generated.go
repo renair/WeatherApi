@@ -8,9 +8,11 @@ import (
 	"errors"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/renair/weather/models"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
 )
@@ -63,7 +65,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateLocation func(childComplexity int, input NewLocation) int
+		CreateLocation func(childComplexity int, input models.NewLocation) int
 	}
 
 	Query struct {
@@ -88,13 +90,13 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateLocation(ctx context.Context, input NewLocation) (*Location, error)
+	CreateLocation(ctx context.Context, input models.NewLocation) (*models.Location, error)
 }
 type QueryResolver interface {
-	Location(ctx context.Context, id int) (*Location, error)
-	LocationsInRegion(ctx context.Context, longitude *float64, latitude *float64, radius *float64) ([]Location, error)
-	WeatherInRegion(ctx context.Context, longitude *float64, latitude *float64, radius *float64) ([]*WeatherData, error)
-	WeatherInLocation(ctx context.Context, locationID int) (*WeatherData, error)
+	Location(ctx context.Context, id int) (*models.Location, error)
+	LocationsInRegion(ctx context.Context, longitude *float64, latitude *float64, radius *float64) ([]models.Location, error)
+	WeatherInRegion(ctx context.Context, longitude *float64, latitude *float64, radius *float64) ([]*models.WeatherData, error)
+	WeatherInLocation(ctx context.Context, locationID int) (*models.WeatherData, error)
 }
 
 type executableSchema struct {
@@ -206,7 +208,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateLocation(childComplexity, args["input"].(NewLocation)), true
+		return e.complexity.Mutation.CreateLocation(childComplexity, args["input"].(models.NewLocation)), true
 
 	case "Query.Location":
 		if e.complexity.Query.Location == nil {
@@ -443,9 +445,9 @@ scalar Timestamp`},
 func (ec *executionContext) field_Mutation_createLocation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 NewLocation
+	var arg0 models.NewLocation
 	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNNewLocation2githubᚗcomᚋrenairᚋweatherᚐNewLocation(ctx, tmp)
+		arg0, err = ec.unmarshalNNewLocation2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐNewLocation(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -588,7 +590,7 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Cloud_cloudiness(ctx context.Context, field graphql.CollectedField, obj *Cloud) graphql.Marshaler {
+func (ec *executionContext) _Cloud_cloudiness(ctx context.Context, field graphql.CollectedField, obj *models.Cloud) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -615,7 +617,7 @@ func (ec *executionContext) _Cloud_cloudiness(ctx context.Context, field graphql
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Cloud_uvIndex(ctx context.Context, field graphql.CollectedField, obj *Cloud) graphql.Marshaler {
+func (ec *executionContext) _Cloud_uvIndex(ctx context.Context, field graphql.CollectedField, obj *models.Cloud) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -639,7 +641,7 @@ func (ec *executionContext) _Cloud_uvIndex(ctx context.Context, field graphql.Co
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Cloud_isSnow(ctx context.Context, field graphql.CollectedField, obj *Cloud) graphql.Marshaler {
+func (ec *executionContext) _Cloud_isSnow(ctx context.Context, field graphql.CollectedField, obj *models.Cloud) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -663,7 +665,7 @@ func (ec *executionContext) _Cloud_isSnow(ctx context.Context, field graphql.Col
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Cloud_isRain(ctx context.Context, field graphql.CollectedField, obj *Cloud) graphql.Marshaler {
+func (ec *executionContext) _Cloud_isRain(ctx context.Context, field graphql.CollectedField, obj *models.Cloud) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -687,7 +689,7 @@ func (ec *executionContext) _Cloud_isRain(ctx context.Context, field graphql.Col
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Location_id(ctx context.Context, field graphql.CollectedField, obj *Location) graphql.Marshaler {
+func (ec *executionContext) _Location_id(ctx context.Context, field graphql.CollectedField, obj *models.Location) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -714,7 +716,7 @@ func (ec *executionContext) _Location_id(ctx context.Context, field graphql.Coll
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Location_longitude(ctx context.Context, field graphql.CollectedField, obj *Location) graphql.Marshaler {
+func (ec *executionContext) _Location_longitude(ctx context.Context, field graphql.CollectedField, obj *models.Location) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -741,7 +743,7 @@ func (ec *executionContext) _Location_longitude(ctx context.Context, field graph
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Location_latitude(ctx context.Context, field graphql.CollectedField, obj *Location) graphql.Marshaler {
+func (ec *executionContext) _Location_latitude(ctx context.Context, field graphql.CollectedField, obj *models.Location) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -768,7 +770,7 @@ func (ec *executionContext) _Location_latitude(ctx context.Context, field graphq
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Location_locationName(ctx context.Context, field graphql.CollectedField, obj *Location) graphql.Marshaler {
+func (ec *executionContext) _Location_locationName(ctx context.Context, field graphql.CollectedField, obj *models.Location) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -792,7 +794,7 @@ func (ec *executionContext) _Location_locationName(ctx context.Context, field gr
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MainValues_temperature(ctx context.Context, field graphql.CollectedField, obj *MainValues) graphql.Marshaler {
+func (ec *executionContext) _MainValues_temperature(ctx context.Context, field graphql.CollectedField, obj *models.MainValues) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -819,7 +821,7 @@ func (ec *executionContext) _MainValues_temperature(ctx context.Context, field g
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MainValues_humidity(ctx context.Context, field graphql.CollectedField, obj *MainValues) graphql.Marshaler {
+func (ec *executionContext) _MainValues_humidity(ctx context.Context, field graphql.CollectedField, obj *models.MainValues) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -846,7 +848,7 @@ func (ec *executionContext) _MainValues_humidity(ctx context.Context, field grap
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MainValues_brightness(ctx context.Context, field graphql.CollectedField, obj *MainValues) graphql.Marshaler {
+func (ec *executionContext) _MainValues_brightness(ctx context.Context, field graphql.CollectedField, obj *models.MainValues) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -873,7 +875,7 @@ func (ec *executionContext) _MainValues_brightness(ctx context.Context, field gr
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _MainValues_pressure(ctx context.Context, field graphql.CollectedField, obj *MainValues) graphql.Marshaler {
+func (ec *executionContext) _MainValues_pressure(ctx context.Context, field graphql.CollectedField, obj *models.MainValues) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -917,7 +919,7 @@ func (ec *executionContext) _Mutation_createLocation(ctx context.Context, field 
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateLocation(rctx, args["input"].(NewLocation))
+		return ec.resolvers.Mutation().CreateLocation(rctx, args["input"].(models.NewLocation))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -925,10 +927,10 @@ func (ec *executionContext) _Mutation_createLocation(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*Location)
+	res := resTmp.(*models.Location)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNLocation2ᚖgithubᚗcomᚋrenairᚋweatherᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_location(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -959,10 +961,10 @@ func (ec *executionContext) _Query_location(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*Location)
+	res := resTmp.(*models.Location)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNLocation2ᚖgithubᚗcomᚋrenairᚋweatherᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_locationsInRegion(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -993,10 +995,10 @@ func (ec *executionContext) _Query_locationsInRegion(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]Location)
+	res := resTmp.([]models.Location)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNLocation2ᚕgithubᚗcomᚋrenairᚋweatherᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚕgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_weatherInRegion(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -1027,10 +1029,10 @@ func (ec *executionContext) _Query_weatherInRegion(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*WeatherData)
+	res := resTmp.([]*models.WeatherData)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNWeatherData2ᚕᚖgithubᚗcomᚋrenairᚋweatherᚐWeatherData(ctx, field.Selections, res)
+	return ec.marshalNWeatherData2ᚕᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_weatherInLocation(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -1061,10 +1063,10 @@ func (ec *executionContext) _Query_weatherInLocation(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*WeatherData)
+	res := resTmp.(*models.WeatherData)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚐWeatherData(ctx, field.Selections, res)
+	return ec.marshalNWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -1122,7 +1124,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WeatherData_location(ctx context.Context, field graphql.CollectedField, obj *WeatherData) graphql.Marshaler {
+func (ec *executionContext) _WeatherData_location(ctx context.Context, field graphql.CollectedField, obj *models.WeatherData) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -1143,13 +1145,13 @@ func (ec *executionContext) _WeatherData_location(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(Location)
+	res := resTmp.(models.Location)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNLocation2githubᚗcomᚋrenairᚋweatherᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐLocation(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WeatherData_values(ctx context.Context, field graphql.CollectedField, obj *WeatherData) graphql.Marshaler {
+func (ec *executionContext) _WeatherData_values(ctx context.Context, field graphql.CollectedField, obj *models.WeatherData) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -1170,13 +1172,13 @@ func (ec *executionContext) _WeatherData_values(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(MainValues)
+	res := resTmp.(models.MainValues)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNMainValues2githubᚗcomᚋrenairᚋweatherᚐMainValues(ctx, field.Selections, res)
+	return ec.marshalNMainValues2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐMainValues(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WeatherData_cloud(ctx context.Context, field graphql.CollectedField, obj *WeatherData) graphql.Marshaler {
+func (ec *executionContext) _WeatherData_cloud(ctx context.Context, field graphql.CollectedField, obj *models.WeatherData) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -1197,13 +1199,13 @@ func (ec *executionContext) _WeatherData_cloud(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(Cloud)
+	res := resTmp.(models.Cloud)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNCloud2githubᚗcomᚋrenairᚋweatherᚐCloud(ctx, field.Selections, res)
+	return ec.marshalNCloud2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐCloud(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WeatherData_wind(ctx context.Context, field graphql.CollectedField, obj *WeatherData) graphql.Marshaler {
+func (ec *executionContext) _WeatherData_wind(ctx context.Context, field graphql.CollectedField, obj *models.WeatherData) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -1221,13 +1223,13 @@ func (ec *executionContext) _WeatherData_wind(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*Wind)
+	res := resTmp.(*models.Wind)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalOWind2ᚖgithubᚗcomᚋrenairᚋweatherᚐWind(ctx, field.Selections, res)
+	return ec.marshalOWind2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWind(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WeatherData_date(ctx context.Context, field graphql.CollectedField, obj *WeatherData) graphql.Marshaler {
+func (ec *executionContext) _WeatherData_date(ctx context.Context, field graphql.CollectedField, obj *models.WeatherData) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -1248,13 +1250,13 @@ func (ec *executionContext) _WeatherData_date(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(time.Time)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNTimestamp2string(ctx, field.Selections, res)
+	return ec.marshalNTimestamp2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Wind_speed(ctx context.Context, field graphql.CollectedField, obj *Wind) graphql.Marshaler {
+func (ec *executionContext) _Wind_speed(ctx context.Context, field graphql.CollectedField, obj *models.Wind) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -1281,7 +1283,7 @@ func (ec *executionContext) _Wind_speed(ctx context.Context, field graphql.Colle
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Wind_direction(ctx context.Context, field graphql.CollectedField, obj *Wind) graphql.Marshaler {
+func (ec *executionContext) _Wind_direction(ctx context.Context, field graphql.CollectedField, obj *models.Wind) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -2139,8 +2141,8 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputNewLocation(ctx context.Context, v interface{}) (NewLocation, error) {
-	var it NewLocation
+func (ec *executionContext) unmarshalInputNewLocation(ctx context.Context, v interface{}) (models.NewLocation, error) {
+	var it models.NewLocation
 	var asMap = v.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -2179,7 +2181,7 @@ func (ec *executionContext) unmarshalInputNewLocation(ctx context.Context, v int
 
 var cloudImplementors = []string{"Cloud"}
 
-func (ec *executionContext) _Cloud(ctx context.Context, sel ast.SelectionSet, obj *Cloud) graphql.Marshaler {
+func (ec *executionContext) _Cloud(ctx context.Context, sel ast.SelectionSet, obj *models.Cloud) graphql.Marshaler {
 	fields := graphql.CollectFields(ctx, sel, cloudImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -2212,7 +2214,7 @@ func (ec *executionContext) _Cloud(ctx context.Context, sel ast.SelectionSet, ob
 
 var locationImplementors = []string{"Location"}
 
-func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet, obj *Location) graphql.Marshaler {
+func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet, obj *models.Location) graphql.Marshaler {
 	fields := graphql.CollectFields(ctx, sel, locationImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -2251,7 +2253,7 @@ func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet,
 
 var mainValuesImplementors = []string{"MainValues"}
 
-func (ec *executionContext) _MainValues(ctx context.Context, sel ast.SelectionSet, obj *MainValues) graphql.Marshaler {
+func (ec *executionContext) _MainValues(ctx context.Context, sel ast.SelectionSet, obj *models.MainValues) graphql.Marshaler {
 	fields := graphql.CollectFields(ctx, sel, mainValuesImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -2407,7 +2409,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 
 var weatherDataImplementors = []string{"WeatherData"}
 
-func (ec *executionContext) _WeatherData(ctx context.Context, sel ast.SelectionSet, obj *WeatherData) graphql.Marshaler {
+func (ec *executionContext) _WeatherData(ctx context.Context, sel ast.SelectionSet, obj *models.WeatherData) graphql.Marshaler {
 	fields := graphql.CollectFields(ctx, sel, weatherDataImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -2451,7 +2453,7 @@ func (ec *executionContext) _WeatherData(ctx context.Context, sel ast.SelectionS
 
 var windImplementors = []string{"Wind"}
 
-func (ec *executionContext) _Wind(ctx context.Context, sel ast.SelectionSet, obj *Wind) graphql.Marshaler {
+func (ec *executionContext) _Wind(ctx context.Context, sel ast.SelectionSet, obj *models.Wind) graphql.Marshaler {
 	fields := graphql.CollectFields(ctx, sel, windImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -2734,7 +2736,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return graphql.MarshalBoolean(v)
 }
 
-func (ec *executionContext) marshalNCloud2githubᚗcomᚋrenairᚋweatherᚐCloud(ctx context.Context, sel ast.SelectionSet, v Cloud) graphql.Marshaler {
+func (ec *executionContext) marshalNCloud2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐCloud(ctx context.Context, sel ast.SelectionSet, v models.Cloud) graphql.Marshaler {
 	return ec._Cloud(ctx, sel, &v)
 }
 
@@ -2754,11 +2756,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return graphql.MarshalInt(v)
 }
 
-func (ec *executionContext) marshalNLocation2githubᚗcomᚋrenairᚋweatherᚐLocation(ctx context.Context, sel ast.SelectionSet, v Location) graphql.Marshaler {
+func (ec *executionContext) marshalNLocation2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐLocation(ctx context.Context, sel ast.SelectionSet, v models.Location) graphql.Marshaler {
 	return ec._Location(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNLocation2ᚕgithubᚗcomᚋrenairᚋweatherᚐLocation(ctx context.Context, sel ast.SelectionSet, v []Location) graphql.Marshaler {
+func (ec *executionContext) marshalNLocation2ᚕgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐLocation(ctx context.Context, sel ast.SelectionSet, v []models.Location) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2782,7 +2784,7 @@ func (ec *executionContext) marshalNLocation2ᚕgithubᚗcomᚋrenairᚋweather�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNLocation2githubᚗcomᚋrenairᚋweatherᚐLocation(ctx, sel, v[i])
+			ret[i] = ec.marshalNLocation2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐLocation(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2795,7 +2797,7 @@ func (ec *executionContext) marshalNLocation2ᚕgithubᚗcomᚋrenairᚋweather�
 	return ret
 }
 
-func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋrenairᚋweatherᚐLocation(ctx context.Context, sel ast.SelectionSet, v *Location) graphql.Marshaler {
+func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐLocation(ctx context.Context, sel ast.SelectionSet, v *models.Location) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -2805,11 +2807,11 @@ func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋrenairᚋweather�
 	return ec._Location(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNMainValues2githubᚗcomᚋrenairᚋweatherᚐMainValues(ctx context.Context, sel ast.SelectionSet, v MainValues) graphql.Marshaler {
+func (ec *executionContext) marshalNMainValues2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐMainValues(ctx context.Context, sel ast.SelectionSet, v models.MainValues) graphql.Marshaler {
 	return ec._MainValues(ctx, sel, &v)
 }
 
-func (ec *executionContext) unmarshalNNewLocation2githubᚗcomᚋrenairᚋweatherᚐNewLocation(ctx context.Context, v interface{}) (NewLocation, error) {
+func (ec *executionContext) unmarshalNNewLocation2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐNewLocation(ctx context.Context, v interface{}) (models.NewLocation, error) {
 	return ec.unmarshalInputNewLocation(ctx, v)
 }
 
@@ -2821,19 +2823,25 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return graphql.MarshalString(v)
 }
 
-func (ec *executionContext) unmarshalNTimestamp2string(ctx context.Context, v interface{}) (string, error) {
-	return graphql.UnmarshalString(v)
+func (ec *executionContext) unmarshalNTimestamp2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
+	return models.UnmarshalTimestamp(v)
 }
 
-func (ec *executionContext) marshalNTimestamp2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	return graphql.MarshalString(v)
+func (ec *executionContext) marshalNTimestamp2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	if v.IsZero() {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return models.MarshalTimestamp(v)
 }
 
-func (ec *executionContext) marshalNWeatherData2githubᚗcomᚋrenairᚋweatherᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v WeatherData) graphql.Marshaler {
+func (ec *executionContext) marshalNWeatherData2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v models.WeatherData) graphql.Marshaler {
 	return ec._WeatherData(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNWeatherData2ᚕᚖgithubᚗcomᚋrenairᚋweatherᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v []*WeatherData) graphql.Marshaler {
+func (ec *executionContext) marshalNWeatherData2ᚕᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v []*models.WeatherData) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2857,7 +2865,7 @@ func (ec *executionContext) marshalNWeatherData2ᚕᚖgithubᚗcomᚋrenairᚋwe
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚐWeatherData(ctx, sel, v[i])
+			ret[i] = ec.marshalOWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2870,7 +2878,7 @@ func (ec *executionContext) marshalNWeatherData2ᚕᚖgithubᚗcomᚋrenairᚋwe
 	return ret
 }
 
-func (ec *executionContext) marshalNWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v *WeatherData) graphql.Marshaler {
+func (ec *executionContext) marshalNWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v *models.WeatherData) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3186,22 +3194,22 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return ec.marshalOString2string(ctx, sel, *v)
 }
 
-func (ec *executionContext) marshalOWeatherData2githubᚗcomᚋrenairᚋweatherᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v WeatherData) graphql.Marshaler {
+func (ec *executionContext) marshalOWeatherData2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v models.WeatherData) graphql.Marshaler {
 	return ec._WeatherData(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v *WeatherData) graphql.Marshaler {
+func (ec *executionContext) marshalOWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v *models.WeatherData) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._WeatherData(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOWind2githubᚗcomᚋrenairᚋweatherᚐWind(ctx context.Context, sel ast.SelectionSet, v Wind) graphql.Marshaler {
+func (ec *executionContext) marshalOWind2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐWind(ctx context.Context, sel ast.SelectionSet, v models.Wind) graphql.Marshaler {
 	return ec._Wind(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOWind2ᚖgithubᚗcomᚋrenairᚋweatherᚐWind(ctx context.Context, sel ast.SelectionSet, v *Wind) graphql.Marshaler {
+func (ec *executionContext) marshalOWind2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWind(ctx context.Context, sel ast.SelectionSet, v *models.Wind) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

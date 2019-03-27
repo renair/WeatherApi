@@ -7,6 +7,7 @@ import (
 
 	"github.com/99designs/gqlgen/handler"
 	"github.com/renair/weather"
+	"github.com/renair/weather/resolver"
 )
 
 const defaultPort = "8080"
@@ -18,7 +19,7 @@ func main() {
 	}
 
 	http.Handle("/", handler.Playground("GraphQL playground", "/query"))
-	http.Handle("/query", handler.GraphQL(weather.NewExecutableSchema(weather.Config{Resolvers: &weather.Resolver{}})))
+	http.Handle("/query", handler.GraphQL(weather.NewExecutableSchema(weather.Config{Resolvers: &resolver.Resolver{}})))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
