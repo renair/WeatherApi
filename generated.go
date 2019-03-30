@@ -70,9 +70,9 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Location          func(childComplexity int, id int) int
-		LocationsInRegion func(childComplexity int, longitude *float64, latitude *float64, radius *float64) int
+		LocationsInRegion func(childComplexity int, longitude float64, latitude float64, radius float64) int
 		WeatherInLocation func(childComplexity int, locationID int) int
-		WeatherInRegion   func(childComplexity int, longitude *float64, latitude *float64, radius *float64) int
+		WeatherInRegion   func(childComplexity int, longitude float64, latitude float64, radius float64) int
 	}
 
 	WeatherData struct {
@@ -94,8 +94,8 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Location(ctx context.Context, id int) (*models.Location, error)
-	LocationsInRegion(ctx context.Context, longitude *float64, latitude *float64, radius *float64) ([]models.Location, error)
-	WeatherInRegion(ctx context.Context, longitude *float64, latitude *float64, radius *float64) ([]*models.WeatherData, error)
+	LocationsInRegion(ctx context.Context, longitude float64, latitude float64, radius float64) ([]models.Location, error)
+	WeatherInRegion(ctx context.Context, longitude float64, latitude float64, radius float64) ([]*models.WeatherData, error)
 	WeatherInLocation(ctx context.Context, locationID int) (*models.WeatherData, error)
 }
 
@@ -232,7 +232,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.LocationsInRegion(childComplexity, args["longitude"].(*float64), args["latitude"].(*float64), args["radius"].(*float64)), true
+		return e.complexity.Query.LocationsInRegion(childComplexity, args["longitude"].(float64), args["latitude"].(float64), args["radius"].(float64)), true
 
 	case "Query.WeatherInLocation":
 		if e.complexity.Query.WeatherInLocation == nil {
@@ -256,7 +256,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.WeatherInRegion(childComplexity, args["longitude"].(*float64), args["latitude"].(*float64), args["radius"].(*float64)), true
+		return e.complexity.Query.WeatherInRegion(childComplexity, args["longitude"].(float64), args["latitude"].(float64), args["radius"].(float64)), true
 
 	case "WeatherData.Cloud":
 		if e.complexity.WeatherData.Cloud == nil {
@@ -430,8 +430,8 @@ type Mutation {
 
 type Query {
 	location(id: Int!): Location!
-    locationsInRegion(longitude: Float, latitude: Float, radius: Float = 0.0001): [Location!]!
-    weatherInRegion(longitude: Float, latitude: Float, radius: Float = 0.0001): [WeatherData]!
+    locationsInRegion(longitude: Float!, latitude: Float!, radius: Float! = 1): [Location!]!
+    weatherInRegion(longitude: Float!, latitude: Float!, radius: Float! = 1): [WeatherData]!
     weatherInLocation(locationId: Int!): WeatherData!
 }
 
@@ -487,25 +487,25 @@ func (ec *executionContext) field_Query_location_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Query_locationsInRegion_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *float64
+	var arg0 float64
 	if tmp, ok := rawArgs["longitude"]; ok {
-		arg0, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
+		arg0, err = ec.unmarshalNFloat2float64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["longitude"] = arg0
-	var arg1 *float64
+	var arg1 float64
 	if tmp, ok := rawArgs["latitude"]; ok {
-		arg1, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
+		arg1, err = ec.unmarshalNFloat2float64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["latitude"] = arg1
-	var arg2 *float64
+	var arg2 float64
 	if tmp, ok := rawArgs["radius"]; ok {
-		arg2, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
+		arg2, err = ec.unmarshalNFloat2float64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -531,25 +531,25 @@ func (ec *executionContext) field_Query_weatherInLocation_args(ctx context.Conte
 func (ec *executionContext) field_Query_weatherInRegion_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *float64
+	var arg0 float64
 	if tmp, ok := rawArgs["longitude"]; ok {
-		arg0, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
+		arg0, err = ec.unmarshalNFloat2float64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["longitude"] = arg0
-	var arg1 *float64
+	var arg1 float64
 	if tmp, ok := rawArgs["latitude"]; ok {
-		arg1, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
+		arg1, err = ec.unmarshalNFloat2float64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["latitude"] = arg1
-	var arg2 *float64
+	var arg2 float64
 	if tmp, ok := rawArgs["radius"]; ok {
-		arg2, err = ec.unmarshalOFloat2ᚖfloat64(ctx, tmp)
+		arg2, err = ec.unmarshalNFloat2float64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -987,7 +987,7 @@ func (ec *executionContext) _Query_locationsInRegion(ctx context.Context, field 
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().LocationsInRegion(rctx, args["longitude"].(*float64), args["latitude"].(*float64), args["radius"].(*float64))
+		return ec.resolvers.Query().LocationsInRegion(rctx, args["longitude"].(float64), args["latitude"].(float64), args["radius"].(float64))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -1021,7 +1021,7 @@ func (ec *executionContext) _Query_weatherInRegion(ctx context.Context, field gr
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().WeatherInRegion(rctx, args["longitude"].(*float64), args["latitude"].(*float64), args["radius"].(*float64))
+		return ec.resolvers.Query().WeatherInRegion(rctx, args["longitude"].(float64), args["latitude"].(float64), args["radius"].(float64))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {

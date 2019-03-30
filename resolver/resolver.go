@@ -7,6 +7,7 @@ import (
 	"github.com/renair/weather"
 	"github.com/renair/weather/models"
 	"github.com/renair/weather/openweather"
+	"github.com/renair/weather/persistence"
 )
 
 // THIS CODE IS A STARTING POINT ONLY. IT WILL NOT BE UPDATED WITH SCHEMA CHANGES.
@@ -15,6 +16,7 @@ type Resolver struct {
 	nextLocationId int
 	locations      []models.Location
 	ApiClient      *openweather.OpenWeatherApi
+	Persistance    *persistence.Storage
 }
 
 func (r *Resolver) Mutation() weather.MutationResolver {
@@ -47,10 +49,10 @@ func (r *queryResolver) Location(ctx context.Context, id int) (*models.Location,
 	}
 	return &r.locations[index], nil
 }
-func (r *queryResolver) LocationsInRegion(ctx context.Context, longitude *float64, latitude *float64, radius *float64) ([]models.Location, error) {
+func (r *queryResolver) LocationsInRegion(ctx context.Context, longitude float64, latitude float64, radius float64) ([]models.Location, error) {
 	panic("not implemented")
 }
-func (r *queryResolver) WeatherInRegion(ctx context.Context, longitude *float64, latitude *float64, radius *float64) ([]*models.WeatherData, error) {
+func (r *queryResolver) WeatherInRegion(ctx context.Context, longitude float64, latitude float64, radius float64) ([]*models.WeatherData, error) {
 	panic("not implemented")
 }
 func (r *queryResolver) WeatherInLocation(ctx context.Context, locationID int) (*models.WeatherData, error) {
