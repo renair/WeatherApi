@@ -9,10 +9,10 @@ import (
 	"github.com/renair/weather/models"
 )
 
-func (s *Storage) SaveNewLocation(loc *models.Location) error {
+func (s *Storage) SaveNewLocation(loc models.NewLocation) (*models.Location, error) {
 	newId, err := s.conn.Incr(idKey).Result()
 	if err != nil {
-		return fmt.Errorf("Can't create new location. Error in obtaining key: %s", err.Error())
+		return nil, fmt.Errorf("Can't create new location. Error in obtaining key: %s", err.Error())
 	}
 
 	stringNewId := fmt.Sprint(newId)
@@ -22,18 +22,22 @@ func (s *Storage) SaveNewLocation(loc *models.Location) error {
 		Name:      stringNewId,
 	}).Result()
 	if err != nil || changed == 0 {
-		return fmt.Errorf("Error when storing new location: %v", err)
+		return nil, fmt.Errorf("Error when storing new location: %v", err)
 	}
 
 	if loc.LocationName != nil {
 		isStored, err := s.conn.HSet(locationNamesStorage, stringNewId, *loc.LocationName).Result()
 		if err != nil || !isStored {
-			return fmt.Errorf("Error when storing location name: %v", err)
+			return nil, fmt.Errorf("Error when storing location name: %v", err)
 		}
 	}
 
-	loc.ID = int(newId)
-	return nil
+	return &models.Location{
+		ID:           int(newId),
+		Longitude:    loc.Longitude,
+		Latitude:     loc.Latitude,
+		LocationName: loc.LocationName,
+	}, nil
 }
 
 func (s *Storage) LocationById(id int) (*models.Location, error) {
@@ -54,20 +58,21 @@ func (s *Storage) LocationById(id int) (*models.Location, error) {
 	}, nil
 }
 
-func (s *Storage) LocationsInRadius(lon float64, lat float64, radius float64) ([]*models.Location, error) {
+func (s *Storage) LocationsInRadius(lon float64, lat float64, radius float64) ([]models.Location, error) {
 	savedLocs, err := s.conn.GeoRadius(locationsCoordsStorage, lon, lat, &redis.GeoRadiusQuery{
-		Radius: radius,
-		Unit:   "km",
+		Radius:    radius,
+		Unit:      "km",
+		WithCoord: true,
 	}).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	res := make([]*models.Location, len(savedLocs))
+	res := make([]models.Location, len(savedLocs))
 	for i, loc := range savedLocs {
 		locationName, _ := s.conn.HGet(locationNamesStorage, loc.Name).Result()
 		locId, _ := strconv.ParseInt(loc.Name, 10, 64)
-		res[i] = &models.Location{
+		res[i] = models.Location{
 			LocationName: &locationName,
 			Longitude:    loc.Longitude,
 			Latitude:     loc.Latitude,

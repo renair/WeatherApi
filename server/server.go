@@ -36,6 +36,7 @@ func main() {
 	}
 
 	weathrApi := openweather.Initialize(apiKey)
+	weathrApi.SetMeasureUnits(openweather.METRIC)
 	storage := persistence.NewStorage(redisHost, redisPort)
 
 	reslvr := resolver.Resolver{

@@ -45,7 +45,7 @@ type Mutation {
 type Query {
 	location(id: Int!): Location!
     locationsInRegion(longitude: Float!, latitude: Float!, radius: Float! = 1): [Location!]!
-    weatherInRegion(longitude: Float!, latitude: Float!, radius: Float! = 1): [WeatherData]!
+    weatherInRegion(longitude: Float!, latitude: Float!, radius: Float! = 1): [WeatherData!]!
     weatherInLocation(locationId: Int!): WeatherData!
 }
 

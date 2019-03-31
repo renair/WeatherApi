@@ -95,7 +95,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Location(ctx context.Context, id int) (*models.Location, error)
 	LocationsInRegion(ctx context.Context, longitude float64, latitude float64, radius float64) ([]models.Location, error)
-	WeatherInRegion(ctx context.Context, longitude float64, latitude float64, radius float64) ([]*models.WeatherData, error)
+	WeatherInRegion(ctx context.Context, longitude float64, latitude float64, radius float64) ([]models.WeatherData, error)
 	WeatherInLocation(ctx context.Context, locationID int) (*models.WeatherData, error)
 }
 
@@ -431,7 +431,7 @@ type Mutation {
 type Query {
 	location(id: Int!): Location!
     locationsInRegion(longitude: Float!, latitude: Float!, radius: Float! = 1): [Location!]!
-    weatherInRegion(longitude: Float!, latitude: Float!, radius: Float! = 1): [WeatherData]!
+    weatherInRegion(longitude: Float!, latitude: Float!, radius: Float! = 1): [WeatherData!]!
     weatherInLocation(locationId: Int!): WeatherData!
 }
 
@@ -1029,10 +1029,10 @@ func (ec *executionContext) _Query_weatherInRegion(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*models.WeatherData)
+	res := resTmp.([]models.WeatherData)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNWeatherData2ᚕᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx, field.Selections, res)
+	return ec.marshalNWeatherData2ᚕgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_weatherInLocation(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -2841,7 +2841,7 @@ func (ec *executionContext) marshalNWeatherData2githubᚗcomᚋrenairᚋweather�
 	return ec._WeatherData(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNWeatherData2ᚕᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v []*models.WeatherData) graphql.Marshaler {
+func (ec *executionContext) marshalNWeatherData2ᚕgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v []models.WeatherData) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2865,7 +2865,7 @@ func (ec *executionContext) marshalNWeatherData2ᚕᚖgithubᚗcomᚋrenairᚋwe
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx, sel, v[i])
+			ret[i] = ec.marshalNWeatherData2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3192,17 +3192,6 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return ec.marshalOString2string(ctx, sel, *v)
-}
-
-func (ec *executionContext) marshalOWeatherData2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v models.WeatherData) graphql.Marshaler {
-	return ec._WeatherData(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOWeatherData2ᚖgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx context.Context, sel ast.SelectionSet, v *models.WeatherData) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._WeatherData(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOWind2githubᚗcomᚋrenairᚋweatherᚋmodelsᚐWind(ctx context.Context, sel ast.SelectionSet, v models.Wind) graphql.Marshaler {

@@ -21,3 +21,7 @@ func Initialize(apiKey string) *OpenWeatherApi {
 	}
 	return &api
 }
+
+func (owa *OpenWeatherApi) SetMeasureUnits(units string) {
+	owa.measureUnits = units
+}
