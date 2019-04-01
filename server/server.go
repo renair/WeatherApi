@@ -44,9 +44,10 @@ func main() {
 		Persistance: storage,
 	}
 
-	http.Handle("/", handler.Playground("GraphQL playground", "/query"))
+	http.Handle("/playground", handler.Playground("GraphQL playground", "/query"))
 	http.Handle("/query", handler.GraphQL(weather.NewExecutableSchema(weather.Config{Resolvers: &reslvr})))
+	http.Handle("/", http.FileServer(http.Dir("./web")))
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", serverPort)
+	log.Printf("connect to http://localhost:%s/playground for GraphQL playground", serverPort)
 	log.Fatal(http.ListenAndServe(":"+serverPort, nil))
 }
