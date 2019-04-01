@@ -12,3 +12,11 @@ function initMap() {
 	});
 }
 
+function displayMarker(lat, lng, title) {
+	var marker = new google.maps.Marker({
+		position: {'lat': lat, 'lng': lng},
+		map: MAP,
+		title: title
+	});
+}
+
