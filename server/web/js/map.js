@@ -1,7 +1,7 @@
 let MAP;
+let onMarkerClick;
 
 function initMap() {
-	console.log(document.getElementById('map'));
 	MAP = new google.maps.Map(document.getElementById('map'), {
 		center: {lat: 50.42, lng: 30.63},
 		zoom: 12
@@ -12,11 +12,22 @@ function initMap() {
 	});
 }
 
-function displayMarker(lat, lng, title) {
+function displayMarker(location) {
 	var marker = new google.maps.Marker({
-		position: {'lat': lat, 'lng': lng},
+		position: {'lat': location.latitude, 'lng': location.longitude},
 		map: MAP,
-		title: title
+		title: location.locatinName
 	});
+	marker.addListener('click', function() {
+		MAP.panTo(marker.position);
+		if(onMarkerClick) onMarkerClick(marker, location.id);
+	});
+}
+
+function showInfoWindow(marker, content) {
+	var infowindow = new google.maps.InfoWindow({
+		content: content
+	});
+	infowindow.open(MAP, marker);
 }
 

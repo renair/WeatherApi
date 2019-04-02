@@ -1,7 +1,10 @@
 const gqlQueries = `
 mutation CreateLocation($lng: Float!, $lat: Float!, $name: String) {
   createLocation (input: {longitude: $lng, latitude: $lat, locationName: $name}) {
-    id
+	id
+    longitude
+    latitude
+    locationName
   }
 }
 
@@ -35,7 +38,7 @@ query GetRegionWeather($lng: Float!, $lat: Float!, $radius: Float!) {
       direction
     }
     location { 
-    	longitude
+      longitude
       latitude
     }
     cloud {
@@ -53,9 +56,8 @@ query GetWeatherById($id: Int!) {
       pressure
       humidity
     }
-    location { 
-    	longitude
-      latitude
+    location {
+      locationName
     }
     cloud {
       isSnow
@@ -108,4 +110,11 @@ function apiCreateLocation(lat, lng, name, callback, errCallback) {
 		'name': name
 	};
 	qraphQlQuery("CreateLocation", reqArgs, callback, errCallback);
+}
+
+function apiGetWeather(locationId, callback, errCallback) {
+	const reqArgs = {
+		'id': locationId
+	};
+	qraphQlQuery("GetWeatherById", reqArgs, callback, errCallback);
 }
