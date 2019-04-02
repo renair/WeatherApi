@@ -1,4 +1,5 @@
-const gqlQueries = `mutation CreateLocation($lng: Float!, $lat: Float!, $name: String) {
+const gqlQueries = `
+mutation CreateLocation($lng: Float!, $lat: Float!, $name: String) {
   createLocation (input: {longitude: $lng, latitude: $lat, locationName: $name}) {
     id
   }
@@ -91,11 +92,20 @@ function qraphQlQuery(operationName, args, callback, errCallback) {
 	});
 }
 
-function getRegionLocations(lat, lng, rad, callback, errCallback) {
+function apiGetRegionLocations(lat, lng, rad, callback, errCallback) {
 	const reqArgs = {
 		'lat': lat,
 		'lng': lng,
 		'radius': rad
 	};
 	qraphQlQuery("GetLocationsByCoords", reqArgs, callback, errCallback);
+}
+
+function apiCreateLocation(lat, lng, name, callback, errCallback) {
+	const reqArgs = {
+		'lat': lat,
+		'lng': lng,
+		'name': name
+	};
+	qraphQlQuery("CreateLocation", reqArgs, callback, errCallback);
 }
