@@ -1,8 +1,6 @@
 package openweather
 
 import (
-	"fmt"
-
 	"io/ioutil"
 	"net/http"
 )
