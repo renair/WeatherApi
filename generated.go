@@ -37,6 +37,7 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
+	WeatherData() WeatherDataResolver
 }
 
 type DirectiveRoot struct {
@@ -78,6 +79,7 @@ type ComplexityRoot struct {
 	WeatherData struct {
 		Cloud    func(childComplexity int) int
 		Date     func(childComplexity int) int
+		Forecast func(childComplexity int) int
 		Location func(childComplexity int) int
 		Values   func(childComplexity int) int
 		Wind     func(childComplexity int) int
@@ -97,6 +99,9 @@ type QueryResolver interface {
 	LocationsInRegion(ctx context.Context, longitude float64, latitude float64, radius float64) ([]models.Location, error)
 	WeatherInRegion(ctx context.Context, longitude float64, latitude float64, radius float64) ([]models.WeatherData, error)
 	WeatherInLocation(ctx context.Context, locationID int) (*models.WeatherData, error)
+}
+type WeatherDataResolver interface {
+	Forecast(ctx context.Context, obj *models.WeatherData) ([]models.WeatherData, error)
 }
 
 type executableSchema struct {
@@ -272,6 +277,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WeatherData.Date(childComplexity), true
 
+	case "WeatherData.Forecast":
+		if e.complexity.WeatherData.Forecast == nil {
+			break
+		}
+
+		return e.complexity.WeatherData.Forecast(childComplexity), true
+
 	case "WeatherData.Location":
 		if e.complexity.WeatherData.Location == nil {
 			break
@@ -416,6 +428,7 @@ type WeatherData {
     cloud: Cloud!
     wind: Wind
     date: Timestamp!
+	forecast: [WeatherData!]!
 }
 
 input NewLocation {
@@ -1254,6 +1267,33 @@ func (ec *executionContext) _WeatherData_date(ctx context.Context, field graphql
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNTimestamp2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WeatherData_forecast(ctx context.Context, field graphql.CollectedField, obj *models.WeatherData) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "WeatherData",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.WeatherData().Forecast(rctx, obj)
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]models.WeatherData)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNWeatherData2ᚕgithubᚗcomᚋrenairᚋweatherᚋmodelsᚐWeatherData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Wind_speed(ctx context.Context, field graphql.CollectedField, obj *models.Wind) graphql.Marshaler {
@@ -2440,6 +2480,20 @@ func (ec *executionContext) _WeatherData(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "forecast":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._WeatherData_forecast(ctx, field, obj)
+				if res == graphql.Null {
+					invalid = true
+				}
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

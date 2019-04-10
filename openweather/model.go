@@ -1,5 +1,26 @@
 package openweather
 
+type ForecastData struct {
+	Count    int              `json:"cnt"`
+	Measures []ForecastEntity `json:"list"`
+	City     CityInfo         `json:"city"`
+}
+
+type ForecastEntity struct {
+	MeasuredAt     int64             `json:"dt"`
+	GeneralMetrics EnvironmentalData `json:"main"`
+	GeneralData    []ReadableWeather `json:"weather"`
+	Rain           Precipitation     `json:"rain"`
+	Snow           Precipitation     `json:"snow"`
+}
+
+type CityInfo struct {
+	Id      int        `json:"id"`
+	Name    string     `json:"name"`
+	Coord   CoordsData `json:"coord"`
+	Country string     `json:"country"`
+}
+
 type WeatherData struct {
 	Coords         CoordsData        `json:"coord"`
 	GeneralData    []ReadableWeather `json:"weather"`

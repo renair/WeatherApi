@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/renair/weather"
 	"github.com/renair/weather/models"
@@ -64,4 +65,9 @@ func (r *queryResolver) WeatherInLocation(ctx context.Context, locationID int) (
 	}
 	weather, err := r.ApiClient.GetCurrentWeatherByCoords(float32(loc.Longitude), float32(loc.Latitude))
 	return convertWeatherFromApi(weather, *loc), err
+}
+
+func (r *queryResolver) Forecast(ctx context.Context, obj *models.WeatherData) ([]models.WeatherData, error) {
+	fmt.Println("Forecast resolved")
+	return []models.WeatherData{}, nil
 }

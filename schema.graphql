@@ -30,6 +30,7 @@ type WeatherData {
     cloud: Cloud!
     wind: Wind
     date: Timestamp!
+	forecast: [WeatherData!]!
 }
 
 input NewLocation {
