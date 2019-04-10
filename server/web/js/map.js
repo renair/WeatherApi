@@ -12,6 +12,13 @@ function initMap() {
 	});
 }
 
+function moveMapTo(coords){
+	MAP.panTo({
+		lat: coords.latitude,
+		lng: coords.longitude
+	});
+}
+
 function displayMarker(location) {
 	var marker = new google.maps.Marker({
 		position: {'lat': location.latitude, 'lng': location.longitude},

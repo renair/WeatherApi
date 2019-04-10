@@ -17,4 +17,10 @@ $(document).ready(function(){
 		$("#helpModal").modal('show');
 		localStorage.setItem('isFirstTime','true')
 	}
+	
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(function(position){
+			moveMapTo(position.coords);
+		});
+	}
 });
