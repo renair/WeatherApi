@@ -26,6 +26,10 @@ func (r *Resolver) Query() weather.QueryResolver {
 	return &queryResolver{r}
 }
 
+func (r *Resolver) WeatherData() weather.WeatherDataResolver {
+	return &weatherDataResolwer{r}
+}
+
 type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreateLocation(ctx context.Context, input models.NewLocation) (*models.Location, error) {
@@ -67,7 +71,14 @@ func (r *queryResolver) WeatherInLocation(ctx context.Context, locationID int) (
 	return convertWeatherFromApi(weather, *loc), err
 }
 
-func (r *queryResolver) Forecast(ctx context.Context, obj *models.WeatherData) ([]models.WeatherData, error) {
-	fmt.Println("Forecast resolved")
-	return []models.WeatherData{}, nil
+type weatherDataResolwer struct{ *Resolver }
+
+func (r *weatherDataResolwer) Forecast(ctx context.Context, obj *models.WeatherData) ([]models.WeatherData, error) {
+	forecast, err := r.ApiClient.GetForecastByCoords(float32(obj.Location.Longitude), float32(obj.Location.Latitude))
+	if err != nil {
+		fmt.Println(err.Error())
+		return []models.WeatherData{}, err
+	}
+	fmt.Println(forecast)
+	return convertForecastFromApi(forecast, obj.Location), nil
 }

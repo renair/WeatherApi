@@ -39,7 +39,7 @@ func (owa *OpenWeatherApi) GetCurrentWeatherByCoords(lon float32, lat float32) (
 }
 
 func (owa *OpenWeatherApi) GetForecastByCoords(lon float32, lat float32) (ForecastData, error) {
-	req, err := http.NewRequest("GET", "https://samples.openweathermap.org/data/2.5/forecast", nil)
+	req, err := http.NewRequest("GET", "https://api.openweathermap.org/data/2.5/forecast", nil)
 	if err != nil {
 		return ForecastData{}, fmt.Errorf("Can't create http request")
 	}
