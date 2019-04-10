@@ -79,6 +79,5 @@ func (r *weatherDataResolwer) Forecast(ctx context.Context, obj *models.WeatherD
 		fmt.Println(err.Error())
 		return []models.WeatherData{}, err
 	}
-	fmt.Println(forecast)
 	return convertForecastFromApi(forecast, obj.Location), nil
 }

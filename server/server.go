@@ -35,9 +35,10 @@ func main() {
 		redisPort = defaultRedisPort
 	}
 
+	storage := persistence.NewStorage(redisHost, redisPort)
 	weathrApi := openweather.Initialize(apiKey)
 	weathrApi.SetMeasureUnits(openweather.METRIC)
-	storage := persistence.NewStorage(redisHost, redisPort)
+	weathrApi.SetStorage(storage)
 
 	reslvr := resolver.Resolver{
 		ApiClient:   weathrApi,
