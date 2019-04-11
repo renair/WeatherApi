@@ -19,3 +19,11 @@ html, body {
 .weather-value-title {
 	font-weight: bold;
 }
+
+.weather-card {
+	border: 0px;
+}
+
+.forecast-button-block {
+	margin-top: 10px;
+}

@@ -49,6 +49,17 @@ query GetRegionWeather($lng: Float!, $lat: Float!, $radius: Float!) {
   }
 }
 
+query GetForecastById($id: Int!) {
+  weatherInLocation(locationId: $id) {
+    forecast {
+      values{
+        temperature
+      }
+      date
+    }
+  }
+}
+
 query GetWeatherById($id: Int!) {
   weatherInLocation(locationId: $id) {
     values {
@@ -58,10 +69,7 @@ query GetWeatherById($id: Int!) {
     }
     location {
       locationName
-    }
-    cloud {
-      isSnow
-      isRain
+      id
     }
     date
   }
@@ -117,4 +125,11 @@ function apiGetWeather(locationId, callback, errCallback) {
 		'id': locationId
 	};
 	qraphQlQuery("GetWeatherById", reqArgs, callback, errCallback);
+}
+
+function apiGetForecast(locationId, callback, errCallback) {
+	const reqArgs = {
+		'id': locationId
+	};
+	qraphQlQuery("GetForecastById", reqArgs, callback, errCallback);
 }

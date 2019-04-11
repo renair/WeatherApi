@@ -8,8 +8,8 @@ $(document).ready(function(){
 	onMarkerClick = function(marker, id) {
 		console.log("Loading weather for location with id: " + id);
 		apiGetWeather(id, function(data){
-			const content = weatherCardContent(data.weatherInLocation);
-			showInfoWindow(marker, content);
+			const $card = weatherCard(data.weatherInLocation);
+			showInfoWindow(marker, $card[0]); //$card[0] - convert from JQuery object to DOM object
 		});
 	}
 	

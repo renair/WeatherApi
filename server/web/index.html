@@ -56,6 +56,17 @@
         </div>
       </div>
     </div>
+    <div id="forecastModal" class="modal" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Forecast for <span class="location-name"></span></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div id="forecastPlot" class="modal-body"></div>
+        </div>
+      </div>
+    </div>
     <div class="card weather-card">
       <div class="card-body">
         <h4 class="card-title location-name"></h4>
@@ -72,14 +83,23 @@
           <div class="row">
             <span class="weather-value-title">Last update:&nbsp;</span><span class="weather-last-update"></span>
           </div>
+          <div class="row forecast-button-block">
+            <div class="col-2"></div>
+            <div class="col-8">
+              <button type="button" class="btn btn-block btn-success get-forecast">Forecast</button>
+            </div>
+            <div class="col-2"></div>
+          </div>
         </div>
       </div>
     </div>
   </body>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgs37ByA0I7Yh5bZzV_OyFagk8Y97LDIA"></script>
   <script src="/js/api.js"></script>
+  <script src="/js/forecast_plot.js"></script>
   <script src="/js/map.js"></script>
   <script src="/js/manipulation.js"></script>
   <script src="/js/index.js"></script>
